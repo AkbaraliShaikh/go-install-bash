@@ -15,8 +15,8 @@ GO_ROOT="/usr/local/go"
 GO_PATH=$HOME/go
 
 function usage {
-    printf "    ./go-setup -v <version> \n"
-    printf "    Example: ./go-setup -v 1.12.7 \n"
+    printf "    ./go-setup.sh -v <version> \n"
+    printf "    Example: sudo ./go-setup.sh -v 1.12.7 \n"
     exit 1
 }
 
