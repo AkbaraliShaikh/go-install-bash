@@ -15,8 +15,8 @@ GO_ROOT="/usr/local/go"
 GO_PATH=$HOME/go
 
 function usage {
-    printf "    ./biene-setup -v <version> \n"
-    printf "    Example: ./biene-setup -v 1.12.7 \n"
+    printf "    ./go-setup -v <version> \n"
+    printf "    Example: ./go-setup -v 1.12.7 \n"
     exit 1
 }
 
@@ -66,7 +66,7 @@ function install {
         # Setup GO
         setup
         echo "Open new terminal tab to start using GO!"
-        echo "Biene setup completed %s" $'\xF0\x9F\x98\x81'  
+        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'  
         exit 0
     fi
 
@@ -91,7 +91,7 @@ function install {
         # Setup GO
         setup
         echo "Open new terminal tab to start using GO!"
-        echo "Biene setup completed %s" $'\xF0\x9F\x98\x81'  
+        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'  
         exit 0
     fi
 
@@ -138,6 +138,6 @@ function setup {
     echo "You are ready to GO!!!"
 }
 
-printf "Biene setup started ..."
+printf "Go! setup started ..."
 install
 
