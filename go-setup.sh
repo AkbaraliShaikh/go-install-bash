@@ -24,8 +24,8 @@ while getopts :v: opt
 do
     case $opt in
         v) GO_VERSION="$OPTARG" ;;
-        \?) printf "Invalid option : $OPTARG \n" 
-        echo "Usage:" 
+        \?) printf "Invalid option : $OPTARG \n"
+            echo "Usage:"
         usage ;;
     esac
 done
@@ -33,7 +33,7 @@ done
 function install {
     echo
     printf "Scanning ... \n"
-
+    
     # Check if there is any older version GO installed on this machine
     if [ -d /usr/local/go ]; then
         printf "Found an older version of GO ... \n"
@@ -44,7 +44,7 @@ function install {
             *) printf "Exiting ...\n"; exit 1 ;;
         esac
     fi
-
+    
     # Check if the OS is Linux
     if [ "$OS" == "Linux" ] && [ "$ARCH" == "x86_64" ]; then
         pkg=go$GO_VERSION.linux-amd64.tar.gz
@@ -61,15 +61,15 @@ function install {
         sudo tar -C /usr/local/ -xzf $pkg
         rm -rf $pkg
         popd > /dev/null
-
+        
         echo "Installed Successfully ..."
         # Setup GO
         setup
         echo "Open new terminal tab to start using GO!"
-        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'  
+        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'
         exit 0
     fi
-
+    
     # Check if the OS is Linux
     if [ "$OS" == "Darwin" ] && [ "$ARCH" == "x86_64" ]; then
         pkg=go$GO_VERSION.darwin-amd64.pkg
@@ -86,15 +86,15 @@ function install {
         sudo /usr/sbin/installer -pkg $pkg -target /
         rm -rf $pkg
         popd > /dev/null
-
+        
         echo "Installed Successfully ..."
         # Setup GO
         setup
         echo "Open new terminal tab to start using GO!"
-        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'  
+        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'
         exit 0
     fi
-
+    
     echo "Cannot determine your OS [$OS] or you are not running 64-bit [$ARCH] machine."
     exit 1
 }
@@ -104,40 +104,50 @@ function setup {
         mkdir $GO_PATH
         mkdir -p $GO_PATH/{src,pkg,bin}
     else
-        mkdir -p $GO_PATH/{src,pkg,bin}    
+        mkdir -p $GO_PATH/{src,pkg,bin}
     fi
-
+    
+    if [ -n "`$SHELL -c 'echo $BASH_VERSION'`" ]; then
+        sh_profile="bashrc"
+        elif [ -n "`$SHELL -c 'echo $ZSH_VERSION'`" ]; then
+        sh_profile="zshrc"
+    fi
+    
+    if [ ! -f $HOME/.${sh_profile} ]; then
+        touch $HOME/.${sh_profile}
+    fi
+    
     if [ "$OS" == "Linux" ]; then
-        
-        if [ ! -f $HOME/.bashrc ]; then
-            touch $HOME/.bashrc
-        fi
-        
-        grep -q -F 'export GOPATH=$HOME/go' $HOME/.bashrc || echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
-        grep -q -F 'export GOROOT=/usr/local/go' $HOME/.bashrc || echo 'export GOROOT=/usr/local/go' >> $HOME/.bashrc
-        grep -q -F 'export PATH=$PATH:$GOPATH/bin' $HOME/.bashrc || echo 'export PATH=$PATH:$GOPATH/bin' >> $HOME/.bashrc
-        grep -q -F 'export PATH=$PATH:$GOROOT/bin' $HOME/.bashrc || echo 'export PATH=$PATH:$GOROOT/bin' >> $HOME/.bashrc
-
-        echo "Go env path setup completed."
+        # Clean exiting GO paths
+        sed -i '/export GOROOT/d' "$HOME/.${sh_profile}"
+        sed -i '/$GOROOT\/bin/d' "$HOME/.${sh_profile}"
+        sed -i '/export GOPATH/d' "$HOME/.${sh_profile}"
+        sed -i '/$GOPATH\/bin/d' "$HOME/.${sh_profile}"
     fi
-
+    
     if [ "$OS" == "Darwin" ]; then
+        # Clean exiting GO paths
+        sed -i "" '/export GOROOT/d' "$HOME/.${sh_profile}"
+        sed -i "" '/$GOROOT\/bin/d' "$HOME/.${sh_profile}"
+        sed -i "" '/export GOPATH/d' "$HOME/.${sh_profile}"
+        sed -i "" '/$GOPATH\/bin/d' "$HOME/.${sh_profile}"
         
-        if [ ! -f $HOME/.bash_profile ]; then
-            touch $HOME/.bash_profile
-        fi
-        
-        grep -q -F 'export GOPATH=$HOME/go' $HOME/.bash_profile || echo 'export GOPATH=$HOME/go' >> $HOME/.bash_profile
-        grep -q -F 'export GOROOT=/usr/local/go' $HOME/.bash_profile || echo 'export GOROOT=/usr/local/go' >> $HOME/.bash_profile
-        grep -q -F 'export PATH=$PATH:$GOPATH/bin' $HOME/.bash_profile || echo 'export PATH=$PATH:$GOPATH/bin' >> $HOME/.bash_profile
-        grep -q -F 'export PATH=$PATH:$GOROOT/bin' $HOME/.bash_profile || echo 'export PATH=$PATH:$GOROOT/bin' >> $HOME/.bash_profile
-
-        echo "Go env path setup completed."
     fi
-
+    
+    # Set Go paths.
+    touch "$HOME/.${sh_profile}"                                                   1 ↵
+    {
+        echo '# Go'
+        echo "export GOROOT=${GO_ROOT}"
+        echo 'export PATH=$GOROOT/bin:$PATH'
+        echo "export GOPATH=$GO_PATH"
+        echo 'export PATH=$GOPATH/bin:$PATH'
+    } >> "$HOME/.${sh_profile}"
+    
+    echo "Go $OS env path setup completed."
     echo "You are ready to GO!!!"
 }
 
-printf "Go! setup started ..."
+echo "Go! setup started for $OS ..."
 install
 
