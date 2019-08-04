@@ -117,8 +117,8 @@ function setup {
         touch $HOME/.${sh_profile}
     fi
     
+    # Clean exiting GO paths
     if [ "$OS" == "Linux" ]; then
-        # Clean exiting GO paths
         sed -i '/export GOROOT/d' "$HOME/.${sh_profile}"
         sed -i '/$GOROOT\/bin/d' "$HOME/.${sh_profile}"
         sed -i '/export GOPATH/d' "$HOME/.${sh_profile}"
@@ -126,7 +126,6 @@ function setup {
     fi
     
     if [ "$OS" == "Darwin" ]; then
-        # Clean exiting GO paths
         sed -i "" '/export GOROOT/d' "$HOME/.${sh_profile}"
         sed -i "" '/$GOROOT\/bin/d' "$HOME/.${sh_profile}"
         sed -i "" '/export GOPATH/d' "$HOME/.${sh_profile}"
@@ -145,6 +144,7 @@ function setup {
     } >> "$HOME/.${sh_profile}"
     
     echo "Go $OS env path setup completed."
+    echo "Go! setup Completed for $OS ..."
     echo "You are ready to GO!!!"
 }
 
