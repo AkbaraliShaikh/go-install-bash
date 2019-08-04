@@ -66,7 +66,7 @@ function install {
         # Setup GO
         setup
         echo "Open new terminal tab to start using GO!"
-        echo "Go! setup completed %s" $'\xF0\x9F\x98\x81'
+        echo "Go! setup completed " $'\xF0\x9F\x98\x81'
         exit 0
     fi
     
